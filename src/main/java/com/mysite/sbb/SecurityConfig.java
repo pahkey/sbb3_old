@@ -19,24 +19,42 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        // http.authorizeHttpRequests().requestMatchers(
+        //         new AntPathRequestMatcher("/**")).permitAll()
+        // 	.and()
+        // 		.csrf().ignoringRequestMatchers(
+        // 				new AntPathRequestMatcher("/h2-console/**"))
+        // 	.and()
+        //         .headers()
+        //         .addHeaderWriter(new XFrameOptionsHeaderWriter(
+        //                 XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
+        //     .and()
+        //         .formLogin()
+        //         .loginPage("/user/login")
+        //         .defaultSuccessUrl("/")
+        //     .and()
+        //         .logout()
+        //         .logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
+        //         .logoutSuccessUrl("/")
+        //         .invalidateHttpSession(true)
+        		;
+
         http.authorizeHttpRequests().requestMatchers(
                 new AntPathRequestMatcher("/**")).permitAll()
-        	.and()
-        		.csrf().ignoringRequestMatchers(
-        				new AntPathRequestMatcher("/h2-console/**"))
-        	.and()
-                .headers()
-                .addHeaderWriter(new XFrameOptionsHeaderWriter(
-                        XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
-            .and()
-                .formLogin()
-                .loginPage("/user/login")
-                .defaultSuccessUrl("/")
-            .and()
-                .logout()
-                .logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
-                .logoutSuccessUrl("/")
-                .invalidateHttpSession(true)
+                .and()
+                .csrf(csrf -> csrf.ignoringRequestMatchers(
+                        new AntPathRequestMatcher("/h2-console/**")))
+                .headers(headers -> headers
+                        .addHeaderWriter(new XFrameOptionsHeaderWriter(
+                                XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))
+                .formLogin(login -> login
+                        .loginPage("/user/login")
+                        .defaultSuccessUrl("/"))
+                .logout(logout -> logout
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
+                        .logoutSuccessUrl("/")
+                        .invalidateHttpSession(true))
         		;
         return http.build();
     }
